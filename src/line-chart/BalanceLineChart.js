@@ -5,6 +5,7 @@ import Chart from '../chart/chart'
 import {View} from "react-native"
 import Svg from "react-native-svg"
 import React from "react"
+import PropTypes from 'prop-types'
 import Path from "react-native-svg-charts/src/animated-path"
 
 
@@ -12,6 +13,24 @@ class BalanceLineChart extends Chart {
   calcIndexes() {
     const {data} = this.props
     return data.map((_, index) => index)
+  }
+
+  // read BarChart.calcXScale for more information
+  calcXScale(domain) {
+    const {
+      contentInset: { left = 0, right = 0 },
+      spacingInner,
+      spacingOuter,
+    } = this.props
+
+    const { width } = this.state
+
+    return scale
+        .scaleBand()
+        .domain(domain)
+        .range([left, width - right])
+        .paddingInner([spacingInner])
+        .paddingOuter([spacingOuter])
   }
 
   createPaths({data, x, y, barWidth}) {
@@ -38,15 +57,13 @@ class BalanceLineChart extends Chart {
       xAccessor,
       yAccessor,
       yScale,
-      xScale,
       style,
       animate,
       animationDuration,
       numberOfTicks,
-      contentInset: { top = 0, bottom = 0, left = 0, right = 0 },
+      contentInset: { top = 0, bottom = 0 },
       gridMax,
       gridMin,
-      clampX,
       clampY,
       svg,
       children,
@@ -64,12 +81,10 @@ class BalanceLineChart extends Chart {
     }))
 
     const yValues = mappedData.map((item) => item.y)
-    const xValues = mappedData.map((item) => item.x)
 
     const yExtent = array.extent([...yValues, gridMin, gridMax])
-    const xExtent = array.extent([...xValues])
 
-    const { yMin = yExtent[0], yMax = yExtent[1], xMin = xExtent[0], xMax = xExtent[1] } = this.props
+    const { yMin = yExtent[0], yMax = yExtent[1] } = this.props
 
     //invert range to support svg coordinate system
     const y = yScale()
@@ -78,14 +93,7 @@ class BalanceLineChart extends Chart {
         .clamp(clampY)
 
     // [aspire] [balance line] [cash flow chart]
-    const x = scale
-        .scaleBand()
-        .domain(this.calcIndexes())
-        .range([left, width - right])
-        .paddingInner([0.05])
-        .paddingOuter([0.05])
-
-    // [aspire] [balance line] [cash flow chart]
+    const x = this.calcXScale(this.calcIndexes())
     const barWidth = x.bandwidth() / 2.8
 
     const paths = this.createPaths({
@@ -142,6 +150,8 @@ class BalanceLineChart extends Chart {
 
 BalanceLineChart.propTypes = {
   ...Chart.propTypes,
+  spacingInner: PropTypes.number,
+  spacingOuter: PropTypes.number,
 }
 
 BalanceLineChart.defaultProps = {
