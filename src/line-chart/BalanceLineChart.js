@@ -1,29 +1,35 @@
 import * as array from 'd3-array'
-import * as scale from 'd3-scale'
 import * as shape from 'd3-shape'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
-import { View } from 'react-native'
-import Svg from 'react-native-svg'
-import Path from '../animated-path'
+import * as scale from 'd3-scale'
+import Chart from '../chart/chart'
+import {View} from "react-native"
+import Svg from "react-native-svg"
+import React from "react"
+import Path from "react-native-svg-charts/src/animated-path"
 
-class Chart extends PureComponent {
-  state = {
-    width: 0,
-    height: 0,
+
+class BalanceLineChart extends Chart {
+  calcIndexes() {
+    const {data} = this.props
+    return data.map((_, index) => index)
   }
 
-  _onLayout(event) {
-    const {
-      nativeEvent: {
-        layout: { height, width },
-      },
-    } = event
-    this.setState({ height, width })
-  }
+  createPaths({data, x, y, barWidth}) {
+    const {curve} = this.props
 
-  createPaths() {
-    throw 'Extending "Chart" requires you to override "createPaths'
+    const line = shape
+        .line()
+        .x((d) => {
+          return x(d.x) + barWidth
+        })
+        .y((d) => y(d.y))
+        .defined((item) => typeof item.y === 'number')
+        .curve(curve)(data)
+
+    return {
+      path: line,
+      line,
+    }
   }
 
   render() {
@@ -71,15 +77,22 @@ class Chart extends PureComponent {
         .range([height - bottom, top])
         .clamp(clampY)
 
-    const x = xScale()
-        .domain([xMin, xMax])
+    // [aspire] [balance line] [cash flow chart]
+    const x = scale
+        .scaleBand()
+        .domain(this.calcIndexes())
         .range([left, width - right])
-        .clamp(clampX)
+        .paddingInner([0.05])
+        .paddingOuter([0.05])
+
+    // [aspire] [balance line] [cash flow chart]
+    const barWidth = x.bandwidth() / 2.8
 
     const paths = this.createPaths({
       data: mappedData,
       x,
       y,
+      barWidth
     })
 
     const ticks = y.ticks(numberOfTicks)
@@ -91,6 +104,7 @@ class Chart extends PureComponent {
       ticks,
       width,
       height,
+      barWidth,
       ...paths,
     }
 
@@ -126,56 +140,12 @@ class Chart extends PureComponent {
   }
 }
 
-Chart.propTypes = {
-  data: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.object),
-    PropTypes.arrayOf(PropTypes.number),
-    PropTypes.arrayOf(PropTypes.array),
-  ]).isRequired,
-  svg: PropTypes.object,
-
-  style: PropTypes.any,
-
-  animate: PropTypes.bool,
-  animationDuration: PropTypes.number,
-
-  curve: PropTypes.func,
-  contentInset: PropTypes.shape({
-    top: PropTypes.number,
-    left: PropTypes.number,
-    right: PropTypes.number,
-    bottom: PropTypes.number,
-  }),
-  numberOfTicks: PropTypes.number,
-
-  gridMin: PropTypes.number,
-  gridMax: PropTypes.number,
-
-  yMin: PropTypes.any,
-  yMax: PropTypes.any,
-  xMin: PropTypes.any,
-  xMax: PropTypes.any,
-  clampX: PropTypes.bool,
-  clampY: PropTypes.bool,
-
-  xScale: PropTypes.func,
-  yScale: PropTypes.func,
-
-  xAccessor: PropTypes.func,
-  yAccessor: PropTypes.func,
+BalanceLineChart.propTypes = {
+  ...Chart.propTypes,
 }
 
-Chart.defaultProps = {
-  svg: {},
-  width: 100,
-  height: 100,
-  curve: shape.curveLinear,
-  contentInset: {},
-  numberOfTicks: 10,
-  xScale: scale.scaleLinear,
-  yScale: scale.scaleLinear,
-  xAccessor: ({ index }) => index,
-  yAccessor: ({ item }) => item,
+BalanceLineChart.defaultProps = {
+  ...Chart.defaultProps,
 }
 
-export default Chart
+export default BalanceLineChart
