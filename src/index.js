@@ -10,6 +10,7 @@ import YAxis from './y-axis'
 import Decorators from './chart-decorators'
 import Grid from './grid'
 import Path from './animated-path'
+import BalanceLineChart from './line-chart/BalanceLineChart'
 
 export {
     LineChart,
@@ -24,4 +25,5 @@ export {
     Decorators,
     Grid,
     Path,
+    BalanceLineChart
 }

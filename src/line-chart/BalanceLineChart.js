@@ -9,7 +9,7 @@ import PropTypes from 'prop-types'
 import Path from "react-native-svg-charts/src/animated-path"
 
 
-class BalanceLineChart extends Chart {
+export default class BalanceLineChart extends Chart {
   calcIndexes() {
     const {data} = this.props
     return data.map((_, index) => index)
@@ -157,5 +157,3 @@ BalanceLineChart.propTypes = {
 BalanceLineChart.defaultProps = {
   ...Chart.defaultProps,
 }
-
-export default BalanceLineChart
