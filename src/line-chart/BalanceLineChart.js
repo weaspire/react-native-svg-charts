@@ -109,7 +109,7 @@ class BalanceLineChart extends Chart {
     }
 
     return (
-        <View style={style}>
+        <View pointerEvents='none' style={style}>
           <View style={{ flex: 1 }} onLayout={(event) => this._onLayout(event)}>
             {height > 0 && width > 0 && (
                 <Svg style={{ height, width }}>
