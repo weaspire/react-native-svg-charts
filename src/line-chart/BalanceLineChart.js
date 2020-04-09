@@ -33,13 +33,13 @@ export default class BalanceLineChart extends Chart {
         .paddingOuter([spacingOuter])
   }
 
-  createPaths({data, x, y, barWidth}) {
+  createPaths({data, x, y, spacing}) {
     const {curve} = this.props
 
     const line = shape
         .line()
         .x((d) => {
-          return x(d.x) + barWidth
+          return x(d.x) + spacing
         })
         .y((d) => y(d.y))
         .defined((item) => typeof item.y === 'number')
@@ -69,7 +69,7 @@ export default class BalanceLineChart extends Chart {
       children,
     } = this.props
 
-    const { width, height } = this.state
+    const {width, height} = this.state
 
     if (data.length === 0) {
       return <View style={style} />
@@ -94,13 +94,14 @@ export default class BalanceLineChart extends Chart {
 
     // [aspire] [balance line] [cash flow chart]
     const x = this.calcXScale(this.calcIndexes())
-    const barWidth = x.bandwidth() / 2.8
+    const bandwidth = x.bandwidth()
+    const spacing = bandwidth / 2.8
 
     const paths = this.createPaths({
       data: mappedData,
       x,
       y,
-      barWidth
+      spacing
     })
 
     const ticks = y.ticks(numberOfTicks)
@@ -112,15 +113,18 @@ export default class BalanceLineChart extends Chart {
       ticks,
       width,
       height,
-      barWidth,
+      spacing,
+      bandwidth,
       ...paths,
     }
 
     return (
-        <View pointerEvents='none' style={style}>
-          <View style={{ flex: 1 }} onLayout={(event) => this._onLayout(event)}>
+        <View pointerEvents='box-none' style={style}>
+          <View style={{flex: 1}}
+                pointerEvents='box-none'
+                onLayout={(event) => this._onLayout(event)}>
             {height > 0 && width > 0 && (
-                <Svg style={{ height, width }}>
+                <Svg style={{height, width}}>
                   {React.Children.map(children, (child) => {
                     if (child && child.props.belowChart) {
                       return React.cloneElement(child, extraProps)
