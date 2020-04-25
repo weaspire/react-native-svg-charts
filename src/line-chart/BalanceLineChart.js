@@ -118,13 +118,18 @@ export default class BalanceLineChart extends Chart {
       ...paths,
     }
 
+    const svgProps = {}
+    if (Platform.OS === 'android')
+      svgProps.pointerEvents = 'box-none'
+
     return (
         <View pointerEvents='box-none' style={style}>
           <View style={{flex: 1}}
                 pointerEvents='box-none'
                 onLayout={(event) => this._onLayout(event)}>
             {height > 0 && width > 0 && (
-                <Svg style={{height, width}}>
+                <Svg style={{height, width}}
+                     {...svgProps}>
                   {React.Children.map(children, (child) => {
                     if (child && child.props.belowChart) {
                       return React.cloneElement(child, extraProps)
