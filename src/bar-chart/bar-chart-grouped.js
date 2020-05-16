@@ -118,11 +118,9 @@ class GroupedBarChart extends BarChart {
                         path: shape
                             .area()
                             .x((value, _index) => {
-                                const mid = obj.data.length
-                                const derive_valueIndex = valueIndex >= mid ? valueIndex - mid : valueIndex
                                 return _index === 0
-                                    ? x(derive_valueIndex)
-                                    : x(derive_valueIndex) + barWidth * 1.5
+                                  ? x(valueIndex)
+                                  : x(valueIndex) + barWidth * 2
                             })
                             .y0(y(0))
                             .y1((value) => y(value))
