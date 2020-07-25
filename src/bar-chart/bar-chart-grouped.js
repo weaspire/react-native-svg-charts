@@ -120,7 +120,7 @@ class GroupedBarChart extends BarChart {
                             .x((value, _index) => {
                                 return _index === 0
                                   ? x(valueIndex)
-                                  : x(valueIndex) + barWidth * 2
+                                  : x(valueIndex) + barWidth
                             })
                             .y0(y(0))
                             .y1((value) => y(value))

@@ -129,7 +129,7 @@ class XAxis extends PureComponent {
 }
 
 XAxis.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.object])).isRequired,
+    data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.object])).isRequired,
     spacingInner: PropTypes.number,
     spacingOuter: PropTypes.number,
     formatLabel: PropTypes.func,
