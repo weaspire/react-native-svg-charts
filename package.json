@@ -11,7 +11,7 @@
         "test": "jest",
         "storybook": "storybook start -p 7008",
         "eslint": "./node_modules/.bin/eslint .",
-        "prepare": "bob build"
+        "prepare-lib": "bob build"
     },
     "husky": {
         "hooks": {
